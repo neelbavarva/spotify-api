@@ -32,5 +32,5 @@ Save the Refresh token
 
 <h4>Deployment</h4>
 
-<img width="403" alt="image" src="https://user-images.githubusercontent.com/62550592/179567410-59736038-a973-44f7-8003-60e90367ca37.png">
+<img width="503" alt="image" src="https://user-images.githubusercontent.com/62550592/179567410-59736038-a973-44f7-8003-60e90367ca37.png">
 <img width="603" alt="image" src="https://user-images.githubusercontent.com/62550592/179569143-5b2e6aac-a00b-4d02-aecd-dc0e22235601.png">
