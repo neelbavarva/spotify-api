@@ -10,10 +10,9 @@ from flask import Flask, Response, jsonify, render_template
 load_dotenv(find_dotenv())
 
 
-SPOTIFY_CLIENT_ID = "c3ee27eeae4342cebc6678e80b46755b"
-SPOTIFY_SECRET_ID = "41024ca087064a4d8afc34dba875361b"
-SPOTIFY_REFRESH_TOKEN = "AQCfqSDEOgUCADkA9THvY51oSJFyDrz2djd2lOgPHCBZj50BoT1vB4voqqUj0ODZoAs9Ds9opX1dcOkaR5IHtvSM2Jlxj1GDoTolzHHL5ALDlDAGYtwChozZnunRcrqLg6Y"
-
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIFY_SECRET_ID = os.getenv("SPOTIFY_SECRET_ID")
+SPOTIFY_REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN")
 
 REFRESH_TOKEN_URL = "https://accounts.spotify.com/api/token"
 NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing"
