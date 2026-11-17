@@ -19,7 +19,7 @@ https://accounts.spotify.com/authorize?client_id={SPOTIFY_CLIENT_ID}&response_ty
 
 After logging in, save the {CODE} portion of: `http://localhost/callback/?code={CODE}`
 
-Create a string combining `{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}` (e.g. `5n7o4v5a3t7o5r2e3m1:5a8n7d3r4e2w5n8o2v3a7c5`) and **encode** into [Base64](https://base64.io/).
+Create a string combining `{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}` (e.g. `5n...:dh...`) and **encode** into [Base64](https://base64.io/).
 
 Then run a [curl command](https://httpie.org/run) in the form of:
 ```sh
