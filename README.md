@@ -1,35 +1,107 @@
-```
+<div align="center">
+
+# Spotify API
+
+A tiny Flask API that tells your website what you are listening to on Spotify.
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white) ![Spotify Web API](https://img.shields.io/badge/Spotify_Web_API-1DB954?style=flat-square&logo=spotify&logoColor=white) ![Heroku](https://img.shields.io/badge/Heroku-430098?style=flat-square&logo=heroku&logoColor=white)
+
+</div>
+
+## About
+
+This service exposes a single public endpoint that returns the song you are playing on Spotify right now. When nothing is playing, it returns a random track from your recently played list and marks you as offline. It is designed to power a "now playing" widget on a personal website, and it sends a CORS header so any frontend can call it.
+
+## Example response
+
+`GET /`
+
+```json
 {
-  "artistName":"Green Day",
-  "songName":"21 Guns",
-  "status":"Online"
+  "message": {
+    "artistName": "Green Day",
+    "songName": "21 Guns",
+    "status": "Online"
+  }
 }
 ```
 
-<hr>
+| Field | Description |
+| --- | --- |
+| `artistName` | Main artist of the track |
+| `songName` | Track title |
+| `status` | `Online` if a track is playing now, `Offline` if the track is from your recently played list |
 
-<h4>Your Spotify App</h4>
-<img width="469" alt="image" src="https://user-images.githubusercontent.com/62550592/179568130-33ad5129-3007-4262-99ad-4ab58414816b.png">
+## How it works
 
-Navigate to the following URL:
+1. A long-lived Spotify **refresh token** is exchanged for a short-lived access token on every request.
+2. The service calls Spotify's **currently playing** endpoint.
+3. If nothing is playing, it falls back to the **recently played** endpoint and picks a random track.
+4. It returns the artist, song and status as JSON.
+
+## Tech Stack
+
+| Area | Technology |
+| --- | --- |
+| API | Python, Flask |
+| Spotify | Web API (authorization code flow with refresh token) |
+| Hosting | Gunicorn, Heroku `Procfile` |
+
+## Getting Started
+
+### 1. Create a Spotify app
+
+Create an app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) and add `http://localhost/callback/` as a redirect URI.
+
+### 2. Get a refresh token
+
+Open this URL in your browser, replacing `{SPOTIFY_CLIENT_ID}`, and approve access:
 
 ```
 https://accounts.spotify.com/authorize?client_id={SPOTIFY_CLIENT_ID}&response_type=code&scope=user-read-currently-playing,user-read-recently-played&redirect_uri=http://localhost/callback/
 ```
 
-After logging in, save the {CODE} portion of: `http://localhost/callback/?code={CODE}`
+Copy the `code` value from the URL you are redirected to. Then Base64-encode `{SPOTIFY_CLIENT_ID}:{SPOTIFY_SECRET_ID}` and exchange the code for a refresh token:
 
-Create a string combining `{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}` (e.g. `5n...:dh...`) and **encode** into [Base64](https://base64.io/).
-
-Then run a [curl command](https://httpie.org/run) in the form of:
-```sh
-curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Authorization: Basic {BASE64}" -d "grant_type=authorization_code&redirect_uri=http://localhost/callback/&code={CODE}" https://accounts.spotify.com/api/token
+```bash
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Authorization: Basic {BASE64}" \
+  -d "grant_type=authorization_code&redirect_uri=http://localhost/callback/&code={CODE}" \
+  https://accounts.spotify.com/api/token
 ```
 
-Save the Refresh token
+### 3. Configure and run
 
-<hr>
+Create `api/.env`. It is listed in `.gitignore`, so it stays out of Git:
 
-<h4>Deployment</h4>
+```
+SPOTIFY_CLIENT_ID=
+SPOTIFY_SECRET_ID=
+SPOTIFY_REFRESH_TOKEN=
+```
 
-<img width="503" alt="image" src="https://user-images.githubusercontent.com/62550592/179567410-59736038-a973-44f7-8003-60e90367ca37.png">
+```bash
+cd api
+pip install -r requirements.txt
+flask run
+```
+
+Then open [http://127.0.0.1:5000](http://127.0.0.1:5000).
+
+### Environment variables
+
+| Variable | Description |
+| --- | --- |
+| `SPOTIFY_CLIENT_ID` | Client ID of your Spotify app |
+| `SPOTIFY_SECRET_ID` | Client secret of your Spotify app |
+| `SPOTIFY_REFRESH_TOKEN` | Refresh token from step 2 |
+
+## Project Structure
+
+```
+api/
+├── app.py            # Flask app and Spotify calls
+├── requirements.txt
+└── Procfile          # Heroku process definition
+```
